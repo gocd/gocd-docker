@@ -1,5 +1,7 @@
-This is the repository which contains the Dockerfile and supporting scripts for:
+This is the repository which contains the Dockerfiles and supporting scripts for:
 https://registry.hub.docker.com/u/gocd/gocd-dev/
+https://registry.hub.docker.com/u/gocd/gocd-agent/
+https://registry.hub.docker.com/u/gocd/gocd-server/
 
-Follow that URL for more details about the actual image. For instructions to build the Docker images yourself, check the
-first line of the Dockerfile.
+Follow those URLs for more details about the actual images. For instructions to build the Docker images yourself, check
+the first line of each Dockerfile.
