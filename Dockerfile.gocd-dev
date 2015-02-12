@@ -1,4 +1,6 @@
+# Build using: docker build -f Dockerfile.gocd-dev -t gocd-dev:14.4.0 .
 FROM phusion/baseimage:0.9.5
+MAINTAINER Aravind SV <arvind.sv@gmail.com>
 
 RUN rm -rf /etc/service/sshd /etc/my_init.d/00_regen_ssh_host_keys.sh
 RUN apt-get update && apt-get install -y -q unzip java7-runtime-headless git
@@ -6,12 +8,12 @@ RUN apt-get update && apt-get install -y -q unzip java7-runtime-headless git
 RUN echo Pacific/Samoa > /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata
 
 RUN mkdir /etc/service/go-server
-ADD go-common-scripts.sh /etc/service/go-server/go-common-scripts.sh
-ADD go-server-start.sh /etc/service/go-server/run
+ADD gocd-dev/go-common-scripts.sh /etc/service/go-server/go-common-scripts.sh
+ADD gocd-dev/go-server-start.sh /etc/service/go-server/run
 
 RUN mkdir /etc/service/go-agent
-ADD go-common-scripts.sh /etc/service/go-agent/go-common-scripts.sh
-ADD go-agent-start.sh /etc/service/go-agent/run
+ADD gocd-dev/go-common-scripts.sh /etc/service/go-agent/go-common-scripts.sh
+ADD gocd-dev/go-agent-start.sh /etc/service/go-agent/run
 
 ADD http://download.go.cd/gocd-deb/go-server-14.4.0-1356.deb /tmp/go-server.deb
 ADD http://download.go.cd/gocd-deb/go-agent-14.4.0-1356.deb /tmp/go-agent.deb
