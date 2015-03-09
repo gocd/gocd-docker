@@ -4,6 +4,7 @@ set -e
 
 function help_and_exit {
   local usage_prefix="docker run -it -v \`pwd\`/installers:/installers gocd-build-installer"
+  local usage_prefix_with_env="docker run -it -e REPO=https://github.com/arvindsv/gocd.git -e BRANCH=my_new_feature -v \`pwd\`/installers:/installers gocd-build-installer"
 
   cat <<EOF
 [01;31mError: $1[00m
@@ -21,9 +22,9 @@ Example: $usage_prefix deb osx
 
 Options (environment variables):
   REPO   - To configure which git repository should be used. Defaults to https://github.com/gocd/gocd.git.
-  COMMIT - To configure which commit to use in that repository. Defaults to master.
+  BRANCH - To configure which branch to use in that repository. Defaults to master.
 
-Example: $usage_prefix -e REPO=https://github.com/arvindsv/gocd.git -e COMMIT=my_new_feature deb
+Example: $usage_prefix_with_env deb
   to build the Debian installers for my_new_feature branch on the repository mentioned above.
 EOF
 
@@ -65,7 +66,7 @@ fi
 export WINDOWS_JRE_LOCATION='https://download.go.cd/local/jre-7u9-windows-i586.tar.gz'
 export DISABLE_WIN_INSTALLER_LOGGING='true'
 export REPO # Used by go-compile.sh
-export COMMIT # Used by go-compile.sh
+export BRANCH # Used by go-compile.sh
 
 # To handle a bug, when redhat has to be specified before debian. Otherwise it fails. :(
 INSTALLERS_NEEDED=($(echo "${INSTALLERS_NEEDED[@]}" | tr -s ' ' '\n' | sort -r))
