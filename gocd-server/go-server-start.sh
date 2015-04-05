@@ -4,6 +4,8 @@
 
 show_msg "Starting Go Server ..."
 
+/bin/cp -va /go-addons/* /var/lib/go-server/addons/
+chown -R go:go /var/lib/go-server/addons/
 /sbin/setuser go /etc/init.d/go-server start &
 
 wait_for_go_server
