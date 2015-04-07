@@ -2,6 +2,8 @@
 
 . go-common-scripts.sh
 
+[[ -f "/init.sh" ]] && /bin/bash /init.sh
+
 show_msg "Starting Go Server ..."
 
 /bin/cp -va /go-addons/* /var/lib/go-server/addons/
