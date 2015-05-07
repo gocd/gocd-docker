@@ -1,4 +1,4 @@
-# Build using: docker build -f Dockerfile.gocd-build-installer -t gocd-build-installer:14.4.0 .
+# Build using: docker build -f Dockerfile.gocd-build-installer -t gocd-build-installer .
 FROM phusion/baseimage:0.9.16
 MAINTAINER Aravind SV <arvind.sv@gmail.com>
 
