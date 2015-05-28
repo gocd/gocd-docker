@@ -1,4 +1,4 @@
-# Build using: docker build -f Dockerfile.docker-agent -t gocd-agent .
+# Build using: docker build -f Dockerfile.gocd-agent -t gocd-agent .
 FROM phusion/baseimage:0.9.16
 MAINTAINER Aravind SV <arvind.sv@gmail.com>
 
