@@ -3,7 +3,20 @@ FROM phusion/baseimage:0.9.16
 MAINTAINER Aravind SV <arvind.sv@gmail.com>
 
 RUN rm -rf /etc/service/sshd /etc/my_init.d/00_regen_ssh_host_keys.sh
-RUN apt-get update && apt-get install -y -q unzip git wget curl tar openjdk-7-jre-headless
+
+# Update system and install various helper tools
+RUN apt-get update && apt-get install -y -q unzip git wget curl tar
+
+# Install Java.
+RUN \
+  echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
+  add-apt-repository -y ppa:webupd8team/java && \
+  apt-get update && \
+  apt-get install -y oracle-java8-installer && \
+  rm -rf /var/lib/apt/lists/* && \
+  rm -rf /var/cache/oracle-jdk8-installer
+# Define commonly used JAVA_HOME variable
+ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 
 # Get Maven
 ENV MAVEN_VERSION 3.3.3
@@ -32,12 +45,12 @@ ADD http://download.go.cd/gocd-deb/go-server-${GOCD_SERVER_VER}-1863.deb /tmp/go
 
 RUN ["groupadd", "-r", "go"]
 RUN ["useradd", "-r", "-c", "Go User", "-g", "go", "-d", "/var/go", "-m", "-s", "/bin/bash", "go"]
-RUN ["mkdir", "-p", "/var/lib/go-server/addons", "/var/log/go-server", "/etc/go", "/go-addons"]
+RUN ["mkdir", "-p", "/var/lib/go-server/addons", "/var/log/go-server", "/etc/go"]
 RUN ["touch", "/etc/go/postgresqldb.properties"]
-RUN ["chown", "-R", "go:go", "/var/lib/go-server", "/var/log/go-server", "/etc/go", "/go-addons"]
+RUN ["chown", "-R", "go:go", "/var/lib/go-server", "/var/log/go-server", "/etc/go"]
 ADD .ssh /var/go/.ssh
 RUN chown -R go:go /var/go/.ssh && chmod 770 /var/go/.ssh
-VOLUME ["/var/lib/go-server", "/var/log/go-server", "/etc/go", "/go-addons"]
+VOLUME ["/var/lib/go-server", "/var/log/go-server", "/etc/go"]
 
 WORKDIR /tmp
 RUN dpkg -i --debug=10 /tmp/go-server.deb

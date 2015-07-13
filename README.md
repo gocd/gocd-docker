@@ -10,8 +10,13 @@ the first line of each Dockerfile.
 
 # Running
 ## Server
-	docker run -i -t -p 8153:8153 gocd-server
-	docker run -i -t -p 8153:8153 -e AGENT_KEY=your_key_here gocd-server
+	docker run -d -i -t -p 8153:8153 gocd-server
+	docker run -d -i -t -p 8153:8153 -e AGENT_KEY=your_key_here gocd-server
+### Mounting volumes
+To mount the necessary volumes use;
+	-v `pwd`/gocd-server/volumes/var/lib/go-server:/var/lib/go-server
+	-v `pwd`/gocd-server/volumes/var/log/go-server:/var/log/go-server
+	-v `pwd`/gocd-server/volumes/etc/go:/etc/go
 ## Agent
 	docker run -ti -e GO_SERVER=your.go.server.ip_or_host gocd-agent
 	docker run -ti --link <CONTAINER_NAME>:go-server gocd-agent

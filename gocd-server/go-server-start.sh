@@ -2,12 +2,17 @@
 
 . go-common-scripts.sh
 
+chown -R go:go /var/lib/go-server
+chown -R go:go /var/log/go-server
+chown -R go:go /etc/go
+chmod -R 0774 /var/lib/go-server
+chmod -R 0774 /var/log/go-server
+chmod -R 0774 /etc/go
+
 [[ -f "/init.sh" ]] && /bin/bash /init.sh
 
 show_msg "Starting Go Server ..."
 
-/bin/cp -va /go-addons/. /var/lib/go-server/addons/
-chown -R go:go /var/lib/go-server/addons/
 /sbin/setuser go /etc/init.d/go-server start &
 
 wait_for_go_server
