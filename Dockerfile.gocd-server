@@ -3,19 +3,40 @@ FROM phusion/baseimage:0.9.16
 MAINTAINER Aravind SV <arvind.sv@gmail.com>
 
 RUN rm -rf /etc/service/sshd /etc/my_init.d/00_regen_ssh_host_keys.sh
-RUN apt-get update && apt-get install -y -q unzip openjdk-7-jre-headless git
+RUN apt-get update && apt-get install -y -q unzip git wget curl tar openjdk-7-jre-headless
+
+# Get Maven
+ENV MAVEN_VERSION 3.3.3
+RUN curl -fsSL http://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz | tar xzf - -C /usr/share \
+  && mv /usr/share/apache-maven-$MAVEN_VERSION /usr/share/maven \
+  && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
+ENV MAVEN_HOME /usr/share/maven
+
+# Get Ant
+ENV ANT_VERSION 1.9.6
+RUN cd && \
+    wget -q http://www.us.apache.org/dist//ant/binaries/apache-ant-${ANT_VERSION}-bin.tar.gz && \
+    tar -xzf apache-ant-${ANT_VERSION}-bin.tar.gz && \
+    mv apache-ant-${ANT_VERSION} /opt/ant && \
+    rm apache-ant-${ANT_VERSION}-bin.tar.gz
+ENV ANT_HOME /opt/ant
+ENV PATH ${PATH}:/opt/ant/bin
 
 RUN mkdir /etc/service/go-server
 ADD gocd-server/go-common-scripts.sh /etc/service/go-server/go-common-scripts.sh
 ADD gocd-server/go-server-start.sh /etc/service/go-server/run
 
-ADD http://download.go.cd/gocd-deb/go-server-15.1.0-1863.deb /tmp/go-server.deb
+ENV GOCD_SERVER_VER 15.1.0
+
+ADD http://download.go.cd/gocd-deb/go-server-${GOCD_SERVER_VER}-1863.deb /tmp/go-server.deb
 
 RUN ["groupadd", "-r", "go"]
 RUN ["useradd", "-r", "-c", "Go User", "-g", "go", "-d", "/var/go", "-m", "-s", "/bin/bash", "go"]
 RUN ["mkdir", "-p", "/var/lib/go-server/addons", "/var/log/go-server", "/etc/go", "/go-addons"]
 RUN ["touch", "/etc/go/postgresqldb.properties"]
 RUN ["chown", "-R", "go:go", "/var/lib/go-server", "/var/log/go-server", "/etc/go", "/go-addons"]
+ADD .ssh /var/go/.ssh
+RUN chown -R go:go /var/go/.ssh && chmod 770 /var/go/.ssh
 VOLUME ["/var/lib/go-server", "/var/log/go-server", "/etc/go", "/go-addons"]
 
 WORKDIR /tmp
