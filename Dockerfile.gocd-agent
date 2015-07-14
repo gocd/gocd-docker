@@ -3,12 +3,51 @@ FROM phusion/baseimage:0.9.16
 MAINTAINER Aravind SV <arvind.sv@gmail.com>
 
 RUN rm -rf /etc/service/sshd /etc/my_init.d/00_regen_ssh_host_keys.sh
-RUN apt-get update && apt-get install -y -q unzip openjdk-7-jre-headless git
+
+# Update system and install various helper tools
+RUN apt-get update && apt-get install -y -q unzip git wget curl docker.io && \
+            service docker.io start && \
+            ln -s /usr/bin/docker.io /usr/local/bin/docker
+
+# Install Java.
+RUN \
+  echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
+  add-apt-repository -y ppa:webupd8team/java && \
+  apt-get update && \
+  apt-get install -y oracle-java8-installer && \
+  rm -rf /var/cache/oracle-jdk8-installer
+# Define commonly used JAVA_HOME variable
+ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
+
+# Install Maven
+ENV MAVEN_VERSION 3.3.3
+RUN curl -fsSL http://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz | tar xzf - -C /usr/share \
+  && mv /usr/share/apache-maven-$MAVEN_VERSION /usr/share/maven \
+  && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
+ENV MAVEN_HOME /usr/share/maven
+
+# Install Ant
+ENV ANT_VERSION 1.9.6
+RUN cd && \
+    wget -q http://www.us.apache.org/dist//ant/binaries/apache-ant-${ANT_VERSION}-bin.tar.gz && \
+    tar -xzf apache-ant-${ANT_VERSION}-bin.tar.gz && \
+    mv apache-ant-${ANT_VERSION} /opt/ant && \
+    rm apache-ant-${ANT_VERSION}-bin.tar.gz
+ENV ANT_HOME /opt/ant
+ENV PATH ${PATH}:/opt/ant/bin
 
 RUN mkdir /etc/service/go-agent
 ADD gocd-agent/go-agent-start.sh /etc/service/go-agent/run
 
-ADD http://download.go.cd/gocd-deb/go-agent-15.1.0-1863.deb /tmp/go-agent.deb
+# Install GO - Agent
+ENV GOCD_AGENT_VER 15.1.0
+ADD http://download.go.cd/gocd-deb/go-agent-${GOCD_AGENT_VER}-1863.deb /tmp/go-agent.deb
+RUN ["groupadd", "-r", "go"]
+RUN ["useradd", "-r", "-c", "Go User", "-g", "go", "-d", "/var/go", "-m", "-s", "/bin/bash", "go"]
+RUN ["mkdir", "-p", "/var/lib/go-agent", "/var/log/go-agent", "/etc/go"]
+RUN ["chown", "-R", "go:go", "/var/lib/go-agent", "/var/log/go-agent", "/etc/go"]
+ADD .ssh /var/go/.ssh
+RUN chown -R go:go /var/go/.ssh && chmod 770 /var/go/.ssh
 
 WORKDIR /tmp
 RUN dpkg -i /tmp/go-agent.deb
