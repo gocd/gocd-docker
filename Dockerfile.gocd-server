@@ -3,20 +3,60 @@ FROM phusion/baseimage:0.9.16
 MAINTAINER Aravind SV <arvind.sv@gmail.com>
 
 RUN rm -rf /etc/service/sshd /etc/my_init.d/00_regen_ssh_host_keys.sh
-RUN apt-get update && apt-get install -y -q unzip openjdk-7-jre-headless git
+
+# Update system and install various helper tools
+RUN apt-get update && apt-get install -y -q unzip git wget curl tar
+
+# Install Java.
+RUN \
+  echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
+  add-apt-repository -y ppa:webupd8team/java && \
+  apt-get update && \
+  apt-get install -y oracle-java8-installer && \
+  rm -rf /var/cache/oracle-jdk8-installer
+# Define commonly used JAVA_HOME variable
+ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
+
+# Get Maven
+ENV MAVEN_VERSION 3.3.3
+RUN curl -fsSL http://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz | tar xzf - -C /usr/share \
+  && mv /usr/share/apache-maven-$MAVEN_VERSION /usr/share/maven \
+  && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
+ENV MAVEN_HOME /usr/share/maven
+
+# Get Ant
+ENV ANT_VERSION 1.9.6
+RUN cd && \
+    wget -q http://www.us.apache.org/dist//ant/binaries/apache-ant-${ANT_VERSION}-bin.tar.gz && \
+    tar -xzf apache-ant-${ANT_VERSION}-bin.tar.gz && \
+    mv apache-ant-${ANT_VERSION} /opt/ant && \
+    rm apache-ant-${ANT_VERSION}-bin.tar.gz
+ENV ANT_HOME /opt/ant
+ENV PATH ${PATH}:/opt/ant/bin
 
 RUN mkdir /etc/service/go-server
 ADD gocd-server/go-common-scripts.sh /etc/service/go-server/go-common-scripts.sh
 ADD gocd-server/go-server-start.sh /etc/service/go-server/run
 
-ADD http://download.go.cd/gocd-deb/go-server-15.1.0-1863.deb /tmp/go-server.deb
+ENV GOCD_SERVER_VER 15.1.0
+
+ADD http://download.go.cd/gocd-deb/go-server-${GOCD_SERVER_VER}-1863.deb /tmp/go-server.deb
 
 RUN ["groupadd", "-r", "go"]
 RUN ["useradd", "-r", "-c", "Go User", "-g", "go", "-d", "/var/go", "-m", "-s", "/bin/bash", "go"]
-RUN ["mkdir", "-p", "/var/lib/go-server/addons", "/var/log/go-server", "/etc/go", "/go-addons"]
+RUN ["mkdir", "-p", "/var/lib/go-server/addons", "/var/lib/go-server/plugins/external"  ,"/var/log/go-server", "/etc/go"]
 RUN ["touch", "/etc/go/postgresqldb.properties"]
-RUN ["chown", "-R", "go:go", "/var/lib/go-server", "/var/log/go-server", "/etc/go", "/go-addons"]
-VOLUME ["/var/lib/go-server", "/var/log/go-server", "/etc/go", "/go-addons"]
+RUN ["chown", "-R", "go:go", "/var/lib/go-server", "/var/log/go-server", "/etc/go"]
+ADD .ssh /var/go/.ssh
+RUN chown -R go:go /var/go/.ssh && chmod 770 /var/go/.ssh
+VOLUME ["/var/lib/go-server", "/var/log/go-server", "/etc/go"]
+
+# Plugins
+ADD https://github.com/varchev/go-generic-artifactory-poller/releases/download/0.1.0/go-generic-artifactory-poller.jar /var/lib/go-server/plugins/external/go-generic-artifactory-poller.jar
+ADD https://github.com/tusharm/go-artifactory-plugin/releases/download/v1.0.0-62/go-artifactory-plugin-1.0.0-62.distribution.jar /var/lib/go-server/plugins/external/go-artifactory-plugin-1.0.0-62.distribution.jar
+ADD https://github.com/ashwanthkumar/gocd-build-github-pull-requests/releases/download/1.2/github-pr-poller-1.2.jar /var/lib/go-server/plugins/external/github-pr-poller-1.2.jar
+ADD https://github.com/ashwanthkumar/gocd-build-github-pull-requests/releases/download/1.2/git-fb-poller-1.2.jar /var/lib/go-server/plugins/external/git-fb-poller-1.2.jar
+ADD https://github.com/srinivasupadhya/gocd-build-status-notifier/releases/download/1.1/github-pr-status-1.1.jar /var/lib/go-server/plugins/external/github-pr-status-1.1.jar
 
 WORKDIR /tmp
 RUN dpkg -i --debug=10 /tmp/go-server.deb
