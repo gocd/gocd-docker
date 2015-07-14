@@ -8,7 +8,7 @@ chown -R go:go /etc/go
 chmod -R 0774 /var/lib/go-server
 chmod -R 0774 /var/log/go-server
 chmod -R 0774 /etc/go
-
+mkdir -p var/log/go-server/addons
 [[ -f "/init.sh" ]] && /bin/bash /init.sh
 
 show_msg "Starting Go Server ..."

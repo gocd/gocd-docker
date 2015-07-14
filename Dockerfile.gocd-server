@@ -13,7 +13,6 @@ RUN \
   add-apt-repository -y ppa:webupd8team/java && \
   apt-get update && \
   apt-get install -y oracle-java8-installer && \
-  rm -rf /var/lib/apt/lists/* && \
   rm -rf /var/cache/oracle-jdk8-installer
 # Define commonly used JAVA_HOME variable
 ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
@@ -45,12 +44,19 @@ ADD http://download.go.cd/gocd-deb/go-server-${GOCD_SERVER_VER}-1863.deb /tmp/go
 
 RUN ["groupadd", "-r", "go"]
 RUN ["useradd", "-r", "-c", "Go User", "-g", "go", "-d", "/var/go", "-m", "-s", "/bin/bash", "go"]
-RUN ["mkdir", "-p", "/var/lib/go-server/addons", "/var/log/go-server", "/etc/go"]
+RUN ["mkdir", "-p", "/var/lib/go-server/addons", "/var/lib/go-server/plugins/external"  ,"/var/log/go-server", "/etc/go"]
 RUN ["touch", "/etc/go/postgresqldb.properties"]
 RUN ["chown", "-R", "go:go", "/var/lib/go-server", "/var/log/go-server", "/etc/go"]
 ADD .ssh /var/go/.ssh
 RUN chown -R go:go /var/go/.ssh && chmod 770 /var/go/.ssh
 VOLUME ["/var/lib/go-server", "/var/log/go-server", "/etc/go"]
+
+# Plugins
+ADD https://github.com/varchev/go-generic-artifactory-poller/releases/download/0.1.0/go-generic-artifactory-poller.jar /var/lib/go-server/plugins/external/go-generic-artifactory-poller.jar
+ADD https://github.com/tusharm/go-artifactory-plugin/releases/download/v1.0.0-62/go-artifactory-plugin-1.0.0-62.distribution.jar /var/lib/go-server/plugins/external/go-artifactory-plugin-1.0.0-62.distribution.jar
+ADD https://github.com/ashwanthkumar/gocd-build-github-pull-requests/releases/download/1.2/github-pr-poller-1.2.jar /var/lib/go-server/plugins/external/github-pr-poller-1.2.jar
+ADD https://github.com/ashwanthkumar/gocd-build-github-pull-requests/releases/download/1.2/git-fb-poller-1.2.jar /var/lib/go-server/plugins/external/git-fb-poller-1.2.jar
+ADD https://github.com/srinivasupadhya/gocd-build-status-notifier/releases/download/1.1/github-pr-status-1.1.jar /var/lib/go-server/plugins/external/github-pr-status-1.1.jar
 
 WORKDIR /tmp
 RUN dpkg -i --debug=10 /tmp/go-server.deb
