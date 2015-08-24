@@ -9,7 +9,7 @@ RUN mkdir /etc/service/go-server
 ADD gocd-server/go-common-scripts.sh /etc/service/go-server/go-common-scripts.sh
 ADD gocd-server/go-server-start.sh /etc/service/go-server/run
 
-ADD http://download.go.cd/gocd-deb/go-server-15.1.0-1863.deb /tmp/go-server.deb
+ADD http://download.go.cd/gocd-deb/go-server-15.2.0-2248.deb /tmp/go-server.deb
 
 RUN ["groupadd", "-r", "go"]
 RUN ["useradd", "-r", "-c", "Go User", "-g", "go", "-d", "/var/go", "-m", "-s", "/bin/bash", "go"]
