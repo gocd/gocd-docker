@@ -2,10 +2,7 @@
 FROM java:openjdk-7-jre
 MAINTAINER Aravind SV <arvind.sv@gmail.com>
 
-RUN useradd go
-
-RUN mkdir -p /var/run/go-agent && \
-  chown -R go /var/run/go-agent
+RUN mkdir -p /var/run/go-agent
 
 WORKDIR /tmp
 
@@ -16,8 +13,6 @@ RUN curl -L http://download.go.cd/gocd-deb/go-agent-15.2.0-2248.deb > /tmp/go-ag
 
 RUN mkdir -p /var/lib/go-agent/config
 RUN rm -f /etc/default/go-agent
-
-USER go
 
 ENV GO_SERVER=go-server
 ENV GO_SERVER_PORT=8153
