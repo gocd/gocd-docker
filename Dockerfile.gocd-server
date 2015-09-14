@@ -15,8 +15,8 @@ RUN ["groupadd", "-r", "go"]
 RUN ["useradd", "-r", "-c", "Go User", "-g", "go", "-d", "/var/go", "-m", "-s", "/bin/bash", "go"]
 RUN ["mkdir", "-p", "/var/lib/go-server/addons", "/var/log/go-server", "/etc/go", "/go-addons"]
 RUN ["touch", "/etc/go/postgresqldb.properties"]
-RUN ["chown", "-R", "go:go", "/var/lib/go-server", "/var/log/go-server", "/etc/go", "/go-addons"]
-VOLUME ["/var/lib/go-server", "/var/log/go-server", "/etc/go", "/go-addons"]
+RUN ["chown", "-R", "go:go", "/var/lib/go-server", "/var/log/go-server", "/etc/go", "/go-addons", "/var/go"]
+VOLUME ["/var/lib/go-server", "/var/log/go-server", "/etc/go", "/go-addons", "/var/go"]
 
 WORKDIR /tmp
 RUN dpkg -i --debug=10 /tmp/go-server.deb
