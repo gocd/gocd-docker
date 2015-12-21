@@ -1,19 +1,28 @@
 # Build using: docker build -f Dockerfile.gocd-agent -t gocd-agent .
-FROM phusion/baseimage:0.9.16
+FROM java:openjdk-7-jre
 MAINTAINER Aravind SV <arvind.sv@gmail.com>
 
-RUN rm -rf /etc/service/sshd /etc/my_init.d/00_regen_ssh_host_keys.sh
-RUN apt-get update && apt-get install -y -q unzip openjdk-7-jre-headless git
-
-RUN mkdir /etc/service/go-agent
-ADD gocd-agent/go-agent-start.sh /etc/service/go-agent/run
-
-ADD http://download.go.cd/gocd-deb/go-agent-15.2.0-2248.deb /tmp/go-agent.deb
+RUN mkdir -p /var/run/go-agent
 
 WORKDIR /tmp
-RUN dpkg -i /tmp/go-agent.deb
-RUN sed -i 's/DAEMON=Y/DAEMON=N/' /etc/default/go-agent
 
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN curl -L http://download.go.cd/gocd-deb/go-agent-15.2.0-2248.deb > /tmp/go-agent.deb && \
+  dpkg -i /tmp/go-agent.deb && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-CMD ["/sbin/my_init"]
+RUN mkdir -p /var/lib/go-agent/config
+RUN rm -f /etc/default/go-agent
+
+ENV GO_SERVER=go-server
+ENV GO_SERVER_PORT=8153
+ENV AGENT_WORK_DIR=/var/lib/go-agent
+ENV AGENT_KEY=123456789abcdef
+ENV DAEMON=N
+ENV VNC=N
+
+ENV JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
+
+ADD gocd-agent/go-agent-start.sh /usr/local/bin/go-agent
+
+CMD ["/usr/local/bin/go-agent"]
