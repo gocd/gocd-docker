@@ -1,17 +1,15 @@
 # Build using: docker build -f Dockerfile.gocd-server -t gocd-server .
-FROM phusion/baseimage:0.9.16
+FROM phusion/baseimage:0.9.18
 MAINTAINER Aravind SV <arvind.sv@gmail.com>
 
 RUN rm -rf /etc/service/sshd /etc/my_init.d/00_regen_ssh_host_keys.sh
 RUN apt-get update && apt-get install -y -q unzip openjdk-7-jre-headless git
-# install nodejs, update-alternatives is needed on ubuntu to enable command 'node'
-RUN curl --silent --location https://deb.nodesource.com/setup_4.x | bash - && apt-get install --yes nodejs && update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
 
 RUN mkdir /etc/service/go-server
 ADD gocd-server/go-common-scripts.sh /etc/service/go-server/go-common-scripts.sh
 ADD gocd-server/go-server-start.sh /etc/service/go-server/run
 
-ADD http://download.go.cd/gocd-deb/go-server-15.2.0-2248.deb /tmp/go-server.deb
+ADD https://download.go.cd/gocd-deb/go-server-15.3.1-2777.deb /tmp/go-server.deb
 
 RUN ["groupadd", "-r", "go"]
 RUN ["useradd", "-r", "-c", "Go User", "-g", "go", "-d", "/var/go", "-m", "-s", "/bin/bash", "go"]
