@@ -1,11 +1,9 @@
 # Build using: docker build -f Dockerfile.gocd-dev -t gocd-dev .
-FROM phusion/baseimage:0.9.16
+FROM phusion/baseimage:0.9.18
 MAINTAINER Aravind SV <arvind.sv@gmail.com>
 
 RUN rm -rf /etc/service/sshd /etc/my_init.d/00_regen_ssh_host_keys.sh
 RUN apt-get update && apt-get install -y -q unzip openjdk-7-jre-headless git
-# Due to a bug, it looks like you cannot create a pipeline if you're physically located west of the server. Hmm. :(
-RUN echo Pacific/Samoa > /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata
 
 RUN mkdir /etc/service/go-server
 ADD gocd-dev/go-common-scripts.sh /etc/service/go-server/go-common-scripts.sh
@@ -15,8 +13,8 @@ RUN mkdir /etc/service/go-agent
 ADD gocd-dev/go-common-scripts.sh /etc/service/go-agent/go-common-scripts.sh
 ADD gocd-dev/go-agent-start.sh /etc/service/go-agent/run
 
-ADD http://download.go.cd/gocd-deb/go-server-15.2.0-2248.deb /tmp/go-server.deb
-ADD http://download.go.cd/gocd-deb/go-agent-15.2.0-2248.deb /tmp/go-agent.deb
+ADD https://download.go.cd/gocd-deb/go-server-16.1.0-2855.deb /tmp/go-server.deb
+ADD https://download.go.cd/gocd-deb/go-agent-16.1.0-2855.deb /tmp/go-agent.deb
 
 WORKDIR /tmp
 RUN dpkg -i /tmp/go-server.deb
