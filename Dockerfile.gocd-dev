@@ -13,8 +13,8 @@ RUN mkdir /etc/service/go-agent
 ADD gocd-dev/go-common-scripts.sh /etc/service/go-agent/go-common-scripts.sh
 ADD gocd-dev/go-agent-start.sh /etc/service/go-agent/run
 
-ADD https://download.go.cd/gocd-deb/go-server-16.2.1-3027.deb /tmp/go-server.deb
-ADD https://download.go.cd/gocd-deb/go-agent-16.2.1-3027.deb /tmp/go-agent.deb
+ADD https://download.go.cd/binaries/16.2.1-3027/deb/go-server-16.2.1-3027.deb /tmp/go-server.deb
+ADD https://download.go.cd/binaries/16.2.1-3027/deb/go-agent-16.2.1-3027.deb /tmp/go-agent.deb
 
 WORKDIR /tmp
 RUN dpkg -i /tmp/go-server.deb
