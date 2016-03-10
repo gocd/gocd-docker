@@ -1,19 +1,25 @@
 #!/bin/bash
 
-GO_SERVER=${GO_SERVER:-go-server}
+AGENT_KEY=${AGENT_KEY:-123456789abcdef}
 
-COLOR_START="[01;34m"
-COLOR_END="[00m"
+export GO_SERVER=${GO_SERVER:-go-server}
+export GO_SERVER_PORT=8153
+export DAEMON=${DAEMON:-N}
+export AGENT_WORK_DIR=/var/lib/go-agent
+export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64/jre
 
-echo -e "${COLOR_START}Starting Go Agent to connect to server $GO_SERVER ...${COLOR_END}"
-sed -i -e 's/GO_SERVER=.*/GO_SERVER='$GO_SERVER'/' /etc/default/go-agent
+mkdir -p /var/lib/go-agent/config /var/run/go-agent /var/log/go-agent
+chown -R go:go /var/lib/go-agent/config /var/run/go-agent /var/log/go-agent
 
-mkdir -p /var/lib/go-agent/config
-/bin/rm -f /var/lib/go-agent/config/autoregister.properties
+rm -f /etc/default/go-agent
 
-AGENT_KEY="${AGENT_KEY:-123456789abcdef}"
-echo "agent.auto.register.key=$AGENT_KEY" >/var/lib/go-agent/config/autoregister.properties
-if [ -n "$AGENT_RESOURCES" ]; then echo "agent.auto.register.resources=$AGENT_RESOURCES" >>/var/lib/go-agent/config/autoregister.properties; fi
-if [ -n "$AGENT_ENVIRONMENTS" ]; then echo "agent.auto.register.environments=$AGENT_ENVIRONMENTS" >>/var/lib/go-agent/config/autoregister.properties; fi
+autoregister_file=/var/lib/go-agent/config/autoregister.properties
+echo "agent.auto.register.key=$AGENT_KEY" >$autoregister_file
+if [ -n "$AGENT_RESOURCES" ]; then echo "agent.auto.register.resources=$AGENT_RESOURCES" >>$autoregister_file; fi
+if [ -n "$AGENT_ENVIRONMENTS" ]; then echo "agent.auto.register.environments=$AGENT_ENVIRONMENTS" >>$autoregister_file; fi
+chown go:go $autoregister_file
 
-/sbin/setuser go /etc/init.d/go-agent start
+logfiles=(go-agent-bootstrapper.out.log go-agent-launcher.log go-agent-stderr.log go-agent-stdout.log go-agent.log)
+(cd /var/log/go-agent; touch "${logfiles[@]}"; chown go:go "${logfiles[@]}"; tail -F -v "${logfiles[@]}" & disown)
+
+exec /usr/share/go-agent/agent.sh

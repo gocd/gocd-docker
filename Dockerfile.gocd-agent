@@ -1,19 +1,20 @@
 # Build using: docker build -f Dockerfile.gocd-agent -t gocd-agent .
-FROM phusion/baseimage:0.9.18
+FROM java:openjdk-7-jre
 MAINTAINER Aravind SV <arvind.sv@gmail.com>
 
-RUN rm -rf /etc/service/sshd /etc/my_init.d/00_regen_ssh_host_keys.sh
-RUN apt-get update && apt-get install -y -q unzip openjdk-7-jre-headless git
-
-RUN mkdir /etc/service/go-agent
-ADD gocd-agent/go-agent-start.sh /etc/service/go-agent/run
-
-ADD https://download.go.cd/binaries/16.2.1-3027/deb/go-agent-16.2.1-3027.deb /tmp/go-agent.deb
-
 WORKDIR /tmp
-RUN dpkg -i /tmp/go-agent.deb
-RUN sed -i 's/DAEMON=Y/DAEMON=N/' /etc/default/go-agent
 
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+ENV GOCD_VERSION=16.2.1-3027
+ENV GOCD_AGENT_SHA1=d72f8e314499e69dfd56741a866f08cfa695def2
+ENV GOCD_AGENT_URL=https://download.go.cd/binaries/${GOCD_VERSION}/deb/go-agent-${GOCD_VERSION}.deb
 
-CMD ["/sbin/my_init"]
+RUN curl -fSL $GOCD_AGENT_URL >go-agent.deb && \
+  echo "$GOCD_AGENT_SHA1 go-agent.deb" | sha1sum -c - && \
+  dpkg -i go-agent.deb && \
+  curl -L -O https://github.com/Yelp/dumb-init/releases/download/v1.0.0/dumb-init_1.0.0_amd64.deb && \
+  dpkg -i /tmp/dumb-init_* && \
+  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+ADD gocd-agent/go-agent-start.sh /usr/local/bin/go-agent
+
+CMD ["dumb-init", "/usr/local/bin/go-agent"]
