@@ -3,7 +3,7 @@ FROM phusion/baseimage:0.9.18
 MAINTAINER Aravind SV <arvind.sv@gmail.com>
 
 RUN rm -rf /etc/service/sshd /etc/my_init.d/00_regen_ssh_host_keys.sh
-RUN apt-get update && apt-get install -y -q unzip openjdk-7-jre-headless git
+RUN apt-get update && apt-get install -y -q unzip openjdk-7-jre-headless git mercurial subversion
 
 RUN mkdir /etc/service/go-server
 ADD gocd-dev/go-common-scripts.sh /etc/service/go-server/go-common-scripts.sh
