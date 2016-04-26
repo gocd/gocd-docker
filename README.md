@@ -1,15 +1,18 @@
 This is the repository which contains the Dockerfiles and supporting scripts for:
+[gocd-base](https://registry.hub.docker.com/u/gocd/gocd-base/),
+[gocd-dev](https://registry.hub.docker.com/u/gocd/gocd-dev/),
+[gocd-agent](https://registry.hub.docker.com/u/gocd/gocd-agent/),
+[gocd-server](https://registry.hub.docker.com/u/gocd/gocd-server/),
+[gocd-build-installer](https://registry.hub.docker.com/u/gocd/gocd-build-installer/)
 
-https://registry.hub.docker.com/u/gocd/gocd-dev/
+Follow those URLs for more details about the actual images. 
 
-https://registry.hub.docker.com/u/gocd/gocd-agent/
+For instructions to build the Docker images yourself, check
+the first line of each Dockerfile.  You can also use [rake](https://github.com/ruby/rake) to build these image for more information:
 
-https://registry.hub.docker.com/u/gocd/gocd-server/
-
-https://registry.hub.docker.com/u/gocd/gocd-build-installer/
-
-Follow those URLs for more details about the actual images. For instructions to build the Docker images yourself, check
-the first line of each Dockerfile.
+```
+$ rake --tasks
+```
 
 ## Contributing
 
