@@ -1,0 +1,14 @@
+# Build using: docker build --build-arg GO_VERSION=16.x.x-xxxx -f Dockerfile.alpine.gocd-agent -t gocd-agent .
+
+FROM alpine:3.2
+RUN apk --update add openjdk7-jre git mercurial subversion
+
+ARG GO_VERSION
+
+ADD https://download.go.cd/binaries/${GO_VERSION}/generic/go-agent-${GO_VERSION}.zip /tmp/go-agent-${GO_VERSION}.zip
+ENV JAVA_HOME /usr/lib/jvm/default-jvm/jre/
+
+RUN unzip /tmp/go-agent-${GO_VERSION}.zip -d /home
+WORKDIR /home
+
+CMD /bin/sh /home/go-agent-*/agent.sh
