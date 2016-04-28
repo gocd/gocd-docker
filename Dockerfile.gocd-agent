@@ -1,14 +1,15 @@
-# Build using: docker build -f Dockerfile.gocd-agent -t gocd-agent .
-FROM phusion/baseimage:0.9.18
-MAINTAINER Aravind SV <arvind.sv@gmail.com>
+# Build using: docker build --build-arg GO_VERSION=16.x.x-xxxx -f Dockerfile.gocd-agent -t gocd-agent .
+FROM gocd/gocd-base
+MAINTAINER GoCD <go-cd-dev@googlegroups.com>
 
-RUN rm -rf /etc/service/sshd /etc/my_init.d/00_regen_ssh_host_keys.sh
-RUN apt-get update && apt-get install -y -q unzip openjdk-7-jre-headless git mercurial subversion
+ARG GO_VERSION
+
+RUN apt-get update
 
 RUN mkdir /etc/service/go-agent
 ADD gocd-agent/go-agent-start.sh /etc/service/go-agent/run
 
-ADD https://download.go.cd/binaries/16.3.0-3183/deb/go-agent-16.3.0-3183.deb /tmp/go-agent.deb
+ADD https://download.go.cd/binaries/${GO_VERSION}/deb/go-agent-${GO_VERSION}.deb /tmp/go-agent.deb
 
 WORKDIR /tmp
 RUN dpkg -i /tmp/go-agent.deb

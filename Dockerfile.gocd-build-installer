@@ -1,6 +1,6 @@
 # Build using: docker build -f Dockerfile.gocd-build-installer -t gocd-build-installer .
 FROM phusion/baseimage:0.9.16
-MAINTAINER Aravind SV <arvind.sv@gmail.com>
+MAINTAINER GoCD <go-cd-dev@googlegroups.com>
 
 RUN rm -rf /etc/service/sshd /etc/my_init.d/00_regen_ssh_host_keys.sh
 RUN apt-get update && apt-get install -y -q fakeroot git maven nsis openjdk-7-jdk rpm unzip zip
