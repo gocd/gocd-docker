@@ -1,0 +1,34 @@
+<% abort("Missing environment variable GO_VERSION") if ENV['GO_VERSION'].nil? %>
+# Create docker file using : GO_VERSION=16.x.x-xxxx erb Dockerfile.gocd-dev.erb > Dockerfile.gocd-dev.out
+# Build using              : docker build -f Dockerfile.gocd-dev.out --tag=gocd-dev .
+
+FROM phusion/baseimage:0.9.18
+MAINTAINER GoCD <go-cd-dev@googlegroups.com>
+
+RUN rm -rf /etc/service/sshd /etc/my_init.d/00_regen_ssh_host_keys.sh
+RUN apt-get update
+RUN apt-get upgrade -y
+RUN apt-get install -y -q unzip openjdk-7-jre-headless git mercurial subversion
+
+RUN mkdir /etc/service/go-server
+ADD gocd-dev/go-common-scripts.sh /etc/service/go-server/go-common-scripts.sh
+ADD gocd-dev/go-server-start.sh /etc/service/go-server/run
+
+RUN mkdir /etc/service/go-agent
+ADD gocd-dev/go-common-scripts.sh /etc/service/go-agent/go-common-scripts.sh
+ADD gocd-dev/go-agent-start.sh /etc/service/go-agent/run
+
+ADD https://download.go.cd/binaries/<%= ENV['GO_VERSION'] %>/deb/go-server-<%= ENV['GO_VERSION'] %>.deb /tmp/go-server.deb
+ADD https://download.go.cd/binaries/<%= ENV['GO_VERSION'] %>/deb/go-agent-<%= ENV['GO_VERSION'] %>.deb /tmp/go-agent.deb
+
+WORKDIR /tmp
+RUN dpkg -i /tmp/go-server.deb
+RUN dpkg -i /tmp/go-agent.deb
+RUN sed -i -e 's/DAEMON=Y/DAEMON=N/' /etc/default/go-server /etc/default/go-agent
+RUN echo 'export GO_SERVER_SYSTEM_PROPERTIES="-DpluginLocationMonitor.sleepTimeInSecs=1"' >>/etc/default/go-server
+EXPOSE 8153 8154
+
+RUN apt-get clean 
+RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+CMD ["/sbin/my_init"]
