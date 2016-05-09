@@ -1,0 +1,57 @@
+#!/usr/bin/env ruby
+
+if File.basename($PROGRAM_NAME) != 'rake'
+  require 'shellwords'
+  puts "rake -f #{Shellwords.escape($PROGRAM_NAME)} #{Shellwords.shelljoin(ARGV)}"
+  exec "rake -f #{Shellwords.escape($PROGRAM_NAME)} #{Shellwords.shelljoin(ARGV)}"
+end
+
+require 'rubygems'
+
+def verify_version(version, task)
+  unless version
+    puts "Please specify a version for building the docker image"
+    puts "e.g. \n GO_VERSION=16.x.x-xxxx rake #{task}"
+    puts "or"
+    puts "If you want to push the built image to a repository"
+    puts "e.g. \n GO_VERSION=16.x.x-xxxx REPOSITORY=repository_name rake #{task}"
+    exit(1)
+  end
+end
+
+def container_name(repository, type)
+  return repository ? "#{repository}/#{type}" : type 
+end
+
+def docker_build (repository, task, version)
+  verify_version(version, task)
+  type = "gocd-#{task}"
+  container = container_name(repository, type)
+  docker_file = "Dockerfile.#{type}"
+
+  sh("erb #{docker_file}.erb > #{docker_file}.out")
+  sh("docker build -f #{docker_file}.out -t #{container} .")
+
+  if repository
+    sh("docker push #{container}")
+    sh("docker tag #{container} #{container}:#{version}")
+    sh("docker push #{container}:#{version}")
+  end
+end
+
+desc "Build and push a specific version of GoCD agent docker container"
+task :agent do |t, args|
+  docker_build(ENV['REPOSITORY'], t, ENV['GO_VERSION'])
+end
+
+desc "Build and push a specific version of GoCD server docker container"
+task :server do |t, args|
+  docker_build(ENV['REPOSITORY'], t, ENV['GO_VERSION'])
+end
+
+desc "Build and push a specific version of GoCD development container with server and agent"
+task :dev do |t, args|
+  docker_build(ENV['REPOSITORY'], t, ENV['GO_VERSION'])
+end
+
+task :default =>  [:agent, :server, :dev]
