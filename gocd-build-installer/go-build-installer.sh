@@ -63,7 +63,7 @@ if [ "$(echo "${INSTALLERS_NEEDED[@]}" | grep -q '^$'; echo $?)" = "0" ]; then
 fi
 
 
-export WINDOWS_JRE_LOCATION='https://download.go.cd/local/jre-7u9-windows-i586.tar.gz'
+export WINDOWS_JRE_LOCATION='https://mirrors.go.cd/local/jre-7u9-windows-i586.tar.gz'
 export DISABLE_WIN_INSTALLER_LOGGING='true'
 export REPO # Used by go-compile.sh
 export BRANCH # Used by go-compile.sh
