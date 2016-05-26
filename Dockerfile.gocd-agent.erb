@@ -11,7 +11,7 @@ RUN apt-get upgrade -y
 RUN apt-get install -y -q unzip openjdk-7-jre-headless git mercurial subversion
 
 RUN mkdir /etc/service/go-agent
-ADD gocd-dev/go-agent-start.sh /etc/service/go-agent/run
+ADD gocd-agent/go-agent-start.sh /etc/service/go-agent/run
 
 ADD https://download.go.cd/binaries/<%= ENV['GO_VERSION'] %>/deb/go-agent-<%= ENV['GO_VERSION'] %>.deb /tmp/go-agent.deb
 
