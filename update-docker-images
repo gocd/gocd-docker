@@ -35,9 +35,8 @@ def docker_build (repository, task, version)
   if repository
     short_version = version.split("-").first
     sh("docker push #{container}")
-    sh("docker tag #{container} #{container}:#{version}")
     sh("docker tag #{container} #{container}:#{short_version}")
-    sh("docker push #{container}:#{version}")
+    sh("docker push #{container}:#{short_version}")
   end
 end
 
