@@ -123,7 +123,7 @@ fi
 [[ ! -d /config/default ]] && mkdir -p /config/default
 [[ ! -d /config/etc ]] && mkdir -p /config/etc
 
-SERVER_STARTUP_ARGS="-server -Djava.security.egd=file:/dev/./urandom"
+SERVER_STARTUP_ARGS="-server -Djava.security.egd=file:/dev/./urandom -XX:HeapDumpPath=/logs -XX:ErrorFile=/logs/jvm-error.log"
 SERVER_STARTUP_ARGS="${SERVER_STARTUP_ARGS} -Xms$SERVER_MEM -Xmx$SERVER_MAX_MEM -XX:PermSize=$SERVER_MIN_PERM_GEN -XX:MaxPermSize=$SERVER_MAX_PERM_GEN"
 SERVER_STARTUP_ARGS="${SERVER_STARTUP_ARGS} ${JVM_DEBUG} ${GC_LOG} ${GO_SERVER_SYSTEM_PROPERTIES}"
 SERVER_STARTUP_ARGS="${SERVER_STARTUP_ARGS} -Duser.language=en -Djruby.rack.request.size.threshold.bytes=30000000"
@@ -133,5 +133,4 @@ SERVER_STARTUP_ARGS="${SERVER_STARTUP_ARGS} -Dcruise.server.port=$GO_SERVER_PORT
 echo Starting Go Server with command: $(autoDetectJavaExecutable) -jar /go-server/go.jar ${SERVER_STARTUP_ARGS}
 echo Starting Go Server in directory: $SERVER_WORK_DIR
 cd "$SERVER_WORK_DIR"
-
 exec $(autoDetectJavaExecutable) -jar /go-server/go.jar ${SERVER_STARTUP_ARGS}
