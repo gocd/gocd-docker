@@ -113,10 +113,15 @@ AGENT_KEY="${AGENT_KEY:-123456789abcdef}"
 if [ ! -d /config/db ]; then
   echo "Bootstrapping database."
   mkdir /config/db
-  unzip -qq /go-server/go.jar defaultFiles/h2db.zip defaultFiles/h2deltas.zip
+  unzip -qq /go-server/go.jar defaultFiles/h2db.zip
   unzip -qq defaultFiles/h2db.zip -d /config/db
-  unzip -qq defaultFiles/h2deltas.zip -d /config/db
 fi
+
+echo "Preparing database migrations."
+unzip -qq /go-server/go.jar defaultFiles/h2deltas.zip
+unzip -qq defaultFiles/h2deltas.zip -d /config/db
+
+rm -rf defaultFiles
 
 [[ ! -d /config/addons ]] && mkdir /config/addons
 [[ ! -d /config/plugins ]] && mkdir /config/plugins
@@ -130,7 +135,7 @@ SERVER_STARTUP_ARGS="${SERVER_STARTUP_ARGS} -Duser.language=en -Djruby.rack.requ
 SERVER_STARTUP_ARGS="${SERVER_STARTUP_ARGS} -Duser.country=US -Dcruise.config.dir=$GO_CONFIG_DIR -Dcruise.config.file=$GO_CONFIG_DIR/gocd-server-config.xml"
 SERVER_STARTUP_ARGS="${SERVER_STARTUP_ARGS} -Dcruise.server.port=$GO_SERVER_PORT -Dcruise.server.ssl.port=$GO_SERVER_SSL_PORT"
 
-echo Starting Go Server with command: $(autoDetectJavaExecutable) -jar /go-server/go.jar ${SERVER_STARTUP_ARGS}
-echo Starting Go Server in directory: $SERVER_WORK_DIR
+echo Starting GoCD server with command: $(autoDetectJavaExecutable) -jar /go-server/go.jar ${SERVER_STARTUP_ARGS}
+echo Starting GoCD server in directory: $SERVER_WORK_DIR
 cd "$SERVER_WORK_DIR"
 exec $(autoDetectJavaExecutable) -jar /go-server/go.jar ${SERVER_STARTUP_ARGS}
