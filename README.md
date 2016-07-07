@@ -11,6 +11,17 @@ https://registry.hub.docker.com/u/gocd/gocd-build-installer/
 Follow those URLs for more details about the actual images. For instructions to build the Docker images yourself, check
 the first line of each Dockerfile.
 
+## Version control system clients
+
+To keep image size minimal the GoCD server image only contains the Git client. To add other clients create your own image using this as a base.
+
+e.x. to add Subversion:
+```
+FROM gocd/gocd-server:<version>
+RUN apk --no-cache add subversion
+```
+
+
 ## Contributing
 
 We encourage you to contribute to Go. For information on contributing to this project, please see our [contributor's guide](http://www.go.cd/contribute).
