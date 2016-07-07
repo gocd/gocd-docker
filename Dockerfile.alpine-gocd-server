@@ -1,11 +1,11 @@
-# Build using              : GO_VERSION=16.x.x-xxxx docker build -f Dockerfile.alpine-gocd-server -tag=alpine-gocd-server .
+# Build using: GO_VERSION=16.x.x-xxxx docker build -f Dockerfile.alpine-gocd-server --tag=alpine-gocd-server .
 
 FROM delitescere/jdk:latest
 #ENV GO_VERSION=16.5.0-3305
 ENV GO_VERSION=16.6.0-3590
 MAINTAINER GoCD <go-cd-dev@googlegroups.com>
 
-# GoCD scripts currently require bash.  Only git support is bundled.
+# GoCD scripts used here work with ash -- bash not needed.  Only git support is bundled.
 RUN apk --no-cache add git
 
 # Exposing volumes in a simple manner, and setup links behind-the-scenes to match GoCD's directory structure
