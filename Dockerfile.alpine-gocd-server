@@ -12,10 +12,11 @@ RUN apk --no-cache add git
 # This requires some bootstrapping in alpine-start.sh
 RUN mkdir -p /config/default /config/db /config/addons /config/plugins /artifacts /logs /var/lib/go-server/plugins /tmp && \
   ln -sf /artifacts /var/lib/go-server/artifacts && \
+  # Link to /etc/go is likely unnecessary
+  ln -sf /config /etc/go && \
   ln -sf /config /var/lib/go-server/config && \
   ln -sf /config/addons /var/lib/go-server/addons && \
   ln -sf /config/db /var/lib/go-server/db && \
-  ln -sf /config/etc /etc/go && \
   ln -sf /config/plugins /var/lib/go-server/plugins/external && \
   ln -sf /logs /var/log/go-server
 
