@@ -1,0 +1,37 @@
+# Build using: docker build --build-arg GO_VERSION=16.x.x-xxxx -f Dockerfile.docker-gocd-agent --tag=gocd-agent-<GO_VERSION> .
+#
+# Note that this image utilizes an init system (tini), but the GoCD server does not.
+# This is because GoCD agent will spawn jobs that could become zombies.
+FROM ubuntu:16.10
+ARG GO_VERSION=16.6.0-3590
+MAINTAINER GoCD <go-cd-dev@googlegroups.com>
+
+# Add Tini
+ENV TINI_VERSION v0.9.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+RUN chmod +x /tini
+ENTRYPOINT ["/tini", "--"]
+
+COPY gocd-agent/docker-start.sh /start
+
+RUN apt-get update && \
+    apt-get install -y \
+      git \
+      openjdk-8-jdk-headless \
+      unzip \
+      wget \
+      zip && \
+    echo "Installing GoCD agent ${GO_VERSION}" && \
+    wget -qO- http://download.go.cd/binaries/$GO_VERSION/generic/go-agent-$GO_VERSION.zip \
+      # Using 'jar' because 'unzip' doesn't support stdin, and bsdtar is not available on Alpine
+      # Can't extract only specific files because we're working on stdin.
+      |jar xf /dev/stdin && \
+    # Note this rename won't work if /go-agent already exists... (it'll move the dir inside /go-agent)
+    mv ./go-agent-* /go-agent && \
+    sed -e 's/DAEMON=Y/DAEMON=N/' /go-agent/default.cruise-agent > /etc/default/go-agent && \
+    # Trash any temp files
+    apt-get clean && rm -rf /var/tmp/* /go-agent/init.* /go-agent/*.cmd /go-agent/*.bat /go-agent/*.sh /go-agent/default.*
+
+  # ADD https://download.go.cd/binaries/<%= ENV['GO_VERSION'] %>/deb/go-agent-<%= ENV['GO_VERSION'] %>.deb /tmp/go-agent.deb
+
+CMD ["/start"]
