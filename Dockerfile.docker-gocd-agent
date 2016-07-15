@@ -32,6 +32,4 @@ RUN apt-get update && \
     # Trash any temp files
     apt-get clean && rm -rf /var/tmp/* /go-agent/init.* /go-agent/*.cmd /go-agent/*.bat /go-agent/*.sh /go-agent/default.*
 
-  # ADD https://download.go.cd/binaries/<%= ENV['GO_VERSION'] %>/deb/go-agent-<%= ENV['GO_VERSION'] %>.deb /tmp/go-agent.deb
-
 CMD ["/start"]
