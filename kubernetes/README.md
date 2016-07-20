@@ -16,3 +16,5 @@ kubectl create --filename agents.yaml
 
 # Note
 GoCD's server container is not yet published using the image exposing /config, /artifacts, /logs volumes. In the interim server.yaml references my (@tpbrown) GoCD server image.
+
+**This example does not use persistent volumes. If the server pod dies you _will_ lose data.**
