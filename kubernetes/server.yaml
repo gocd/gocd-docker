@@ -1,0 +1,31 @@
+---
+  apiVersion: "v1"
+  kind: "ReplicationController"
+  metadata:
+    name: "gocd"
+  spec:
+    replicas: 1
+    template:
+      metadata:
+        labels:
+          app: "gocd"
+      spec:
+        containers:
+          - name: "gocd"
+            image: "tpbrown/gocd-docker:latest"
+            ports:
+              - containerPort: 8153
+              - containerPort: 8154
+        #     volumeMounts:
+        #       - name: "gocd-data"
+        #         mountPath: "/var/gocd_home"
+        #     livenessProbe:
+        #       httpGet:
+        #         path: /
+        #         port: 8080
+        #       initialDelaySeconds: 60
+        #       timeoutSeconds: 5
+        # volumes:
+        #   - name: "gocd-data"
+        #     hostPath:
+        #       path: "/var/gocd"
