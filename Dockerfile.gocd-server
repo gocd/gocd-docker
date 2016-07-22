@@ -1,0 +1,10 @@
+# This Dockerfile produces a ready-to-run GoCD server that exposes volumes for /config, /logs, and /artifacts.
+# Build using: docker build -f Dockerfile.gocd-server --tag=gocd-server .
+
+# This always pulls the latest GoCD version.
+FROM alpine-server-baseimage:latest
+MAINTAINER GoCD <go-cd-dev@googlegroups.com>
+VOLUME ["/config", "/artifacts", "/logs"]
+
+# Prevent using this image as a base.
+ONBUILD RUN >&2 echo "This image should not be used as a base because it exposes volumes.  Please use gocd/alpine-server-baseimage instead." && exit 1

@@ -1,4 +1,4 @@
-# Build using: docker build --build-arg GO_VERSION=16.x.x-xxxx -f Dockerfile.alpine-gocd-server --tag=alpine-gocd-server .
+# Build using: docker build --build-arg GO_VERSION=16.x.x-xxxx -f Dockerfile.server-baseimage --tag=alpine-server-baseimage .
 
 FROM delitescere/jdk:latest
 #16.5.0-3305
@@ -7,11 +7,20 @@ ARG GO_VERSION=16.6.0-3590
 MAINTAINER GoCD <go-cd-dev@googlegroups.com>
 
 # GoCD scripts used here work with ash -- bash not needed.  Only git support is bundled.
-RUN apk --no-cache add git
+RUN apk --no-cache add git openssh-client
 
 # Exposing volumes in a simple manner, and setup links behind-the-scenes to match GoCD's directory structure
 # This requires some bootstrapping in alpine-start.sh
-RUN mkdir -p /config/default /config/db /config/addons /config/plugins /artifacts /logs /var/lib/go-server/plugins /tmp && \
+RUN mkdir -p \
+  /artifacts \
+  /config/db \
+  /config/default \
+  /config/addons \
+  /config/plugins \
+  /config/ssh \
+  /logs \
+  /var/lib/go-server/plugins \
+  /tmp && \
   ln -sf /artifacts /var/lib/go-server/artifacts && \
   # Link to /etc/go is likely unnecessary
   ln -sf /config /etc/go && \
@@ -19,9 +28,11 @@ RUN mkdir -p /config/default /config/db /config/addons /config/plugins /artifact
   ln -sf /config/addons /var/lib/go-server/addons && \
   ln -sf /config/db /var/lib/go-server/db && \
   ln -sf /config/plugins /var/lib/go-server/plugins/external && \
-  ln -sf /logs /var/log/go-server
+  ln -sf /logs /var/log/go-server && \
+  ln -sf /config/ssh /root/.ssh
 
-VOLUME ["/config", "/artifacts", "/logs"]
+# Don't expose volumes in a base image -- people can't change the contents in downstream images.
+# VOLUME ["/config", "/artifacts", "/logs"]
 
 EXPOSE 8153 8154
 
