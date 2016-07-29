@@ -18,8 +18,8 @@ RUN mkdir /etc/service/go-agent
 ADD gocd-dev/go-common-scripts.sh /etc/service/go-agent/go-common-scripts.sh
 ADD gocd-dev/go-agent-start.sh /etc/service/go-agent/run
 
-ADD https://download.go.cd/binaries/<%= ENV['GO_VERSION'] %>/deb/go-server-<%= ENV['GO_VERSION'] %>.deb /tmp/go-server.deb
-ADD https://download.go.cd/binaries/<%= ENV['GO_VERSION'] %>/deb/go-agent-<%= ENV['GO_VERSION'] %>.deb /tmp/go-agent.deb
+ADD https://download.go.cd/binaries/<%= ENV['GO_VERSION'] %>/deb/go-server_<%= ENV['GO_VERSION'] %>_all.deb /tmp/go-server.deb
+ADD https://download.go.cd/binaries/<%= ENV['GO_VERSION'] %>/deb/go-agent_<%= ENV['GO_VERSION'] %>_all.deb /tmp/go-agent.deb
 
 WORKDIR /tmp
 RUN dpkg -i /tmp/go-server.deb
