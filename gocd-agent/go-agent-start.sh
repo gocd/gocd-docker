@@ -9,6 +9,8 @@ echo -e "${COLOR_START}Starting Go Agent to connect to server $GO_SERVER ...${CO
 sed -i -e 's/GO_SERVER=.*/GO_SERVER='$GO_SERVER'/' /etc/default/go-agent
 
 mkdir -p /var/lib/go-agent/config
+chown go /var/lib/go-agent/config
+
 /bin/rm -f /var/lib/go-agent/config/autoregister.properties
 
 AGENT_KEY="${AGENT_KEY:-123456789abcdef}"
