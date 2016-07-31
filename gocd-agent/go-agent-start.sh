@@ -7,6 +7,7 @@ COLOR_END="[00m"
 
 echo -e "${COLOR_START}Starting Go Agent to connect to server $GO_SERVER ...${COLOR_END}"
 sed -i -e 's/GO_SERVER=.*/GO_SERVER='$GO_SERVER'/' /etc/default/go-agent
+sed -i -e 's/GO_SERVER_URL=.*/GO_SERVER_URL=https:\/\/'$GO_SERVER':8154\/go\//' /etc/default/go-agent
 
 mkdir -p /var/lib/go-agent/config
 /bin/rm -f /var/lib/go-agent/config/autoregister.properties
