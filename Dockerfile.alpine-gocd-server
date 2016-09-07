@@ -22,6 +22,7 @@ RUN mkdir -p /config/default /config/db /config/addons /config/plugins /artifact
   ln -sf /logs /var/log/go-server
 
 VOLUME ["/config", "/artifacts", "/logs"]
+ONBUILD VOLUME ["/config", "/artifacts", "/logs"]
 
 EXPOSE 8153 8154
 
