@@ -2,7 +2,7 @@
 FROM centos:7
 MAINTAINER "GoCD" <gocd-dev@googlegroups.com>
 
-ARG GO_VERSION="16.8.0-3889"
+ARG GO_VERSION="16.8.0-3929"
 ENV TINI_VERSION v0.9.0
 
 RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \

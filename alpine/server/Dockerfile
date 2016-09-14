@@ -1,4 +1,4 @@
-# Build using: docker build --build-arg GO_VERSION=16.x.x-xxxx . --t alpine-gocd-server 
+# Build using: docker build --build-arg GO_VERSION=16.x.x-xxxx -t alpine-gocd-server .
 
 FROM delitescere/jdk:latest
 #16.5.0-3305
