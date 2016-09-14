@@ -1,6 +1,6 @@
 <% abort("Missing environment variable GO_VERSION") if ENV['GO_VERSION'].nil? %>
-# Create docker file using : GO_VERSION=16.x.x-xxxx erb Dockerfile.gocd-agent.erb > Dockerfile.gocd-agent.out
-# Build using              : docker build -f Dockerfile.gocd-agent.out --tag=gocd-agent .
+# Create docker file using : GO_VERSION=16.x.x-xxxx erb Dockerfile.erb > Dockerfile
+# Build using              : docker build . -t gocd-agent
 
 FROM phusion/baseimage:0.9.18
 MAINTAINER GoCD <go-cd-dev@googlegroups.com>
@@ -11,7 +11,7 @@ RUN apt-get upgrade -y
 RUN apt-get install -y -q unzip openjdk-7-jre-headless git mercurial subversion
 
 RUN mkdir /etc/service/go-agent
-ADD gocd-agent/go-agent-start.sh /etc/service/go-agent/run
+ADD go-agent-start.sh /etc/service/go-agent/run
 
 ADD https://download.go.cd/binaries/<%= ENV['GO_VERSION'] %>/deb/go-agent_<%= ENV['GO_VERSION'] %>_all.deb /tmp/go-agent.deb
 

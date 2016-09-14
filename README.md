@@ -1,26 +1,11 @@
 This is the repository which contains the Dockerfiles and supporting scripts for:
 
-https://registry.hub.docker.com/u/gocd/gocd-dev/
-
 https://registry.hub.docker.com/u/gocd/gocd-agent/
 
 https://registry.hub.docker.com/u/gocd/gocd-server/
 
-https://registry.hub.docker.com/u/gocd/gocd-build-installer/
-
 Follow those URLs for more details about the actual images. For instructions to build the Docker images yourself, check
 the first line of each Dockerfile.
-
-## Version control system clients
-
-To keep image size minimal the GoCD server image only contains the Git client. To add other clients create your own image using this as a base.
-
-e.x. to add Subversion:
-```
-FROM gocd/gocd-server:<version>
-RUN apk --no-cache add subversion
-```
-
 
 ## Contributing
 
@@ -30,7 +15,7 @@ A lot of useful information like links to user documentation, design documentati
 ## License
 
 ```plain
-Copyright 2015 ThoughtWorks, Inc.
+Copyright 2016 ThoughtWorks, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

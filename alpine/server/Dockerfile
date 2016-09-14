@@ -1,4 +1,4 @@
-# Build using: docker build --build-arg GO_VERSION=16.x.x-xxxx -f Dockerfile.alpine-gocd-server --tag=alpine-gocd-server .
+# Build using: docker build --build-arg GO_VERSION=16.x.x-xxxx . --t alpine-gocd-server 
 
 FROM delitescere/jdk:latest
 #16.5.0-3305
@@ -26,7 +26,7 @@ VOLUME ["/config", "/artifacts", "/logs"]
 EXPOSE 8153 8154
 
 # Dockerized startup script.  Should work on more than Alpine, but YMMV.
-COPY gocd-server/alpine-start.sh /start
+COPY alpine-start.sh /start
 
 CMD ["/start"]
 
