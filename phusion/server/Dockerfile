@@ -1,9 +1,9 @@
-<% abort("Missing environment variable GO_VERSION") if ENV['GO_VERSION'].nil? %>
-# Create docker file using : GO_VERSION=16.x.x-xxxx erb Dockerfile.erb > Dockerfile
-# Build using              : docker build . -t gocd-server 
+# Build using: docker build --build-args GO_VERSION=16.0-xxxx -t gocd-server .
 
 FROM phusion/baseimage:0.9.18
 MAINTAINER GoCD <go-cd-dev@googlegroups.com>
+
+ARG GO_VERSION="16.8.0-3929"
 
 RUN rm -rf /etc/service/sshd /etc/my_init.d/00_regen_ssh_host_keys.sh
 RUN apt-get update
@@ -14,7 +14,7 @@ RUN mkdir /etc/service/go-server
 ADD go-common-scripts.sh /etc/service/go-server/go-common-scripts.sh
 ADD go-server-start.sh /etc/service/go-server/run
 
-ADD https://download.go.cd/binaries/<%= ENV['GO_VERSION'] %>/deb/go-server_<%= ENV['GO_VERSION'] %>_all.deb /tmp/go-server.deb
+ADD https://download.go.cd/binaries/$GO_VERSION/deb/go-server_${GO_VERSION}_all.deb /tmp/go-server.deb
 
 RUN ["groupadd", "-r", "go"]
 RUN ["useradd", "-r", "-c", "Go User", "-g", "go", "-d", "/var/go", "-m", "-s", "/bin/bash", "go"]

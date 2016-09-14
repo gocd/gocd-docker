@@ -30,8 +30,7 @@ def docker_build (repository, task, version)
 
   verbose false do
     cd "phusion/#{task}" do
-      sh("erb Dockerfile.erb > Dockerfile")
-      sh("docker build . -t #{image}")
+      sh("docker build --build-arg GO_VERSION='#{version}' -t #{image} .")
 
       if repository
         short_version = version.split("-").first
