@@ -20,14 +20,15 @@ RUN ["groupadd", "-r", "go"]
 RUN ["useradd", "-r", "-c", "Go User", "-g", "go", "-d", "/var/go", "-m", "-s", "/bin/bash", "go"]
 RUN ["mkdir", "-p", "/var/lib/go-server/addons", "/var/log/go-server", "/etc/go", "/go-addons"]
 RUN ["chown", "-R", "go:go", "/var/lib/go-server", "/var/log/go-server", "/etc/go", "/go-addons", "/var/go"]
-VOLUME ["/var/lib/go-server", "/var/log/go-server", "/etc/go", "/go-addons", "/var/go"]
 
 WORKDIR /tmp
 RUN dpkg -i --debug=10 /tmp/go-server.deb
 RUN sed -i -e 's/DAEMON=Y/DAEMON=N/' /etc/default/go-server
-EXPOSE 8153 8154
-
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+VOLUME ["/var/lib/go-server", "/var/log/go-server", "/etc/go", "/go-addons", "/var/go"]
+
+EXPOSE 8153 8154
 
 CMD ["/sbin/my_init"]
