@@ -52,4 +52,4 @@ task :server do |t, args|
   docker_build(ENV['REPOSITORY'], t, ENV['GO_VERSION'])
 end
 
-task :default =>  [:agent, :server, :dev]
+task :default =>  [:agent, :server]

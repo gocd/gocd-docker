@@ -4,6 +4,7 @@ FROM delitescere/jdk:latest
 #16.5.0-3305
 #16.6.0-3590
 ARG GO_VERSION=16.6.0-3590
+ARG DOWNLOAD_URL=https://download.go.cd/binaries
 MAINTAINER GoCD <go-cd-dev@googlegroups.com>
 
 # GoCD scripts used here work with ash -- bash not needed.  Only git support is bundled.
@@ -33,7 +34,7 @@ CMD ["/start"]
 # Download Go and install into a consistent directory. Disable daemonize.
 WORKDIR /
 LABEL cd.go.version=$GO_VERSION cd.go.server=""
-RUN echo "Installing GoCD ${GO_VERSION}" && wget -qO- https://download.go.cd/binaries/$GO_VERSION/generic/go-server-$GO_VERSION.zip \
+RUN echo "Installing GoCD ${GO_VERSION}" && wget -qO- $DOWNLOAD_URL/$GO_VERSION/generic/go-server-$GO_VERSION.zip \
   # Using 'jar' because 'unzip' doesn't support stdin, and bsdtar is not available on Alpine
   # Can't extract only specific files because we're working on stdin.
   |jar xf /dev/stdin && \
