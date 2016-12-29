@@ -4,7 +4,7 @@ FROM delitescere/jdk:latest
 #16.5.0-3305
 #16.6.0-3590
 ARG GO_VERSION=16.6.0-3590
-ARG DOWNLOAD_URL=https://download.go.cd/binaries
+ARG DOWNLOAD_URL=https://download.gocd.io/binaries
 MAINTAINER GoCD <go-cd-dev@googlegroups.com>
 
 # GoCD scripts used here work with ash -- bash not needed.  Only git support is bundled.
@@ -40,6 +40,6 @@ RUN echo "Installing GoCD ${GO_VERSION}" && wget -qO- $DOWNLOAD_URL/$GO_VERSION/
   |jar xf /dev/stdin && \
   # Note this rename won't work if /go-server already exists... (it'll move the dir inside /go-server)
   mv ./go-server-* ./go-server && \
-  sed -e 's/DAEMON=Y/DAEMON=N/' /go-server/default.cruise-server > /config/default/go-server && \
+  sed -e 's/DAEMON=Y/DAEMON=N/' /go-server/go-server.default > /config/default/go-server && \
   # Trash any temp files
   rm -rf go-server-* /var/tmp/* /go-server/init.* /go-server/server.cmd /go-server/*.bat /go-server/*.sh /go-server/default.* /go-server/defaultFiles
