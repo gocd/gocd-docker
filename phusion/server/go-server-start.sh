@@ -28,7 +28,7 @@ If you're using docker on a Linux box, you can do this:
 ${COLOR_START}echo http://localhost:\$(docker inspect --format='{{(index (index .NetworkSettings.Ports "8153/tcp") 0).HostPort}}' $HOSTNAME)${COLOR_END}
 
 If you're using docker through boot2docker, on a Mac, do this:
-${COLOR_START}echo http://\$(boot2docker ip):\$(docker inspect --format='{{(index (index .NetworkSettings.Ports "8153/tcp") 0).HostPort}}' $HOSTNAME)${COLOR_END}
+${COLOR_START}echo http://\$(docker-machine ip):\$(docker inspect --format='{{(index (index .NetworkSettings.Ports "8153/tcp") 0).HostPort}}' $HOSTNAME)${COLOR_END}
 
 That command will output the URL through which you should be able to access the Go Server.
 ${COLOR_START}----------------------------------------------------------${COLOR_END}
