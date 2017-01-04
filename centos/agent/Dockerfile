@@ -1,10 +1,10 @@
 # Build stable release using:  docker build --build-arg GO_VERSION=16.x.x-xxxx --rm -t gocd-agent .
-# Build experimental release using: docker build --build-arg GO_VERSION=16.x.x-xxxx --build-arg DOWNLOAD_URL=https://download.go.cd/experimental/binaries --rm -t gocd-agent .
+# Build experimental release using: docker build --build-arg GO_VERSION=16.x.x-xxxx --build-arg DOWNLOAD_URL=https://download.gocd.io/experimental/binaries --rm -t gocd-agent .
 FROM centos:7
 MAINTAINER "GoCD" <gocd-dev@googlegroups.com>
 
 ARG GO_VERSION="16.8.0-3929"
-ARG DOWNLOAD_URL="https://download.go.cd/binaries"
+ARG DOWNLOAD_URL="https://download.gocd.io/binaries"
 ENV TINI_VERSION v0.9.0
 
 RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
