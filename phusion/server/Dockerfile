@@ -1,11 +1,11 @@
 # Build stable release using: docker build --build-args GO_VERSION=16.0-xxxx -t gocd-server .
-# Build experimental release using: docker build --build-args GO_VERSION=16.0-xxxx  --build-args DOWNLOAD_URL=https://download.go.cd/experimental/binaries -t gocd-server .
+# Build experimental release using: docker build --build-args GO_VERSION=16.0-xxxx  --build-args DOWNLOAD_URL=https://download.gocd.io/experimental/binaries -t gocd-server .
 
 FROM phusion/baseimage:0.9.18
 MAINTAINER GoCD <go-cd-dev@googlegroups.com>
 
 ARG GO_VERSION="16.8.0-3929"
-ARG DOWNLOAD_URL="https://download.go.cd/binaries"
+ARG DOWNLOAD_URL="https://download.gocd.io/binaries"
 
 RUN rm -rf /etc/service/sshd /etc/my_init.d/00_regen_ssh_host_keys.sh \
     && apt-get update \
