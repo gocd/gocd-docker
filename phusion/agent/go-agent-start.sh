@@ -1,13 +1,15 @@
 #!/bin/bash
 
 GO_SERVER=${GO_SERVER:-go-server}
+GO_SERVER_PORT=${GO_SERVER_PORT:-8154}
+GO_SERVER_URL=${GO_SERVER_URL:-https://${GO_SERVER}:${GO_SERVER_PORT}/go/}
 
 COLOR_START="[01;34m"
 COLOR_END="[00m"
 
 echo -e "${COLOR_START}Starting Go Agent to connect to server $GO_SERVER ...${COLOR_END}"
-sed -i -e 's/GO_SERVER=.*/GO_SERVER='$GO_SERVER'/' /etc/default/go-agent
-sed -i -e 's/GO_SERVER_URL=.*/GO_SERVER_URL=https:\/\/'$GO_SERVER':8154\/go\//' /etc/default/go-agent
+sed -i -e 's@GO_SERVER=.*@GO_SERVER='${GO_SERVER}'@' /etc/default/go-agent
+sed -i -e 's@GO_SERVER_URL=.*@GO_SERVER_URL='${GO_SERVER_URL}'@' /etc/default/go-agent
 
 mkdir -p /var/lib/go-agent/config
 chown go /var/lib/go-agent/config
