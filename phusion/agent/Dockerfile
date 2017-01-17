@@ -7,9 +7,10 @@ ARG GO_VERSION="16.8.0-3929"
 ARG DOWNLOAD_URL="https://download.gocd.io/binaries"
 
 RUN rm -rf /etc/service/sshd /etc/my_init.d/00_regen_ssh_host_keys.sh
+RUN add-apt-repository ppa:openjdk-r/ppa
 RUN apt-get update
-RUN apt-get upgrade -y
-RUN apt-get install -y -q unzip openjdk-7-jre-headless git mercurial subversion
+RUN apt-get install -y software-properties-common python-software-properties
+RUN apt-get install -y -q unzip openjdk-8-jre git mercurial subversion
 
 RUN mkdir /etc/service/go-agent
 ADD go-agent-start.sh /etc/service/go-agent/run
