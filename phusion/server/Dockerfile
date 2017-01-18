@@ -8,10 +8,9 @@ ARG GO_VERSION="16.8.0-3929"
 ARG DOWNLOAD_URL="https://download.gocd.io/binaries"
 
 RUN rm -rf /etc/service/sshd /etc/my_init.d/00_regen_ssh_host_keys.sh \
-    && add-apt-repository ppa:openjdk-r/ppa \
+    && add-apt-repository -y ppa:openjdk-r/ppa \
     && apt-get update \
-    && apt-get install -y software-properties-common python-software-properties \
-    && apt-get install -y -q unzip openjdk-8-jre git mercurial subversion \
+    && apt-get install -y -q unzip openjdk-8-jre-headless git mercurial subversion \
     && mkdir /etc/service/go-server
 
 ADD go-common-scripts.sh /etc/service/go-server/go-common-scripts.sh
