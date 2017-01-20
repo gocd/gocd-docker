@@ -8,6 +8,10 @@ end
 
 require 'rubygems'
 
+def env(variable)
+  ENV[variable] || raise("Environment variable #{variable} not provided. Please provide and rerun the task")
+end
+
 def verify_version(version, task)
   unless version
     puts "Please specify a version for building the docker image"
@@ -20,7 +24,7 @@ def verify_version(version, task)
 end
 
 def image_name(repository, type)
-  return repository ? "#{repository}/#{type}" : type 
+  return repository ? "#{repository}/#{type}" : type
 end
 
 def docker_build (repository, task, version)
@@ -42,6 +46,16 @@ def docker_build (repository, task, version)
   end
 end
 
+task :login do
+  sh("docker login -u '#{env('USERNAME')}' -p '#{env('PASSWORD')}' https://hub.docker.com/r/#{env('REPOSITORY')}")
+end
+
+task :auth_cleanup do
+  File.open(Dir.home+'/.docker/config.json','w') do |f|
+    f.write '{ "auths": {} }'
+  end
+end
+
 desc "Build and push a specific version of GoCD agent docker image"
 task :agent do |t, args|
   docker_build(ENV['REPOSITORY'], t, ENV['GO_VERSION'])
@@ -52,4 +66,12 @@ task :server do |t, args|
   docker_build(ENV['REPOSITORY'], t, ENV['GO_VERSION'])
 end
 
-task :default =>  [:agent, :server]
+task :default do
+  begin
+    ["login", "agent", "server"].each do |t|
+      Rake::Task[t].invoke
+    end
+  ensure
+    Rake::Task["auth_cleanup"].invoke
+  end
+end
