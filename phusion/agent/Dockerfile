@@ -1,5 +1,5 @@
-# Build stable release using: docker build --build-args GO_VERSION=16.0-xxxx -t gocd-agent .
-# Build experimental build using: docker build --build-args GO_VERSION=16.0-xxxx  --build-args DOWNLOAD_URL=https://download.gocd.io/experimental/binaries -t gocd-agent .
+# Build stable release using: docker build --build-arg GO_VERSION=16.0-xxxx -t gocd-agent .
+# Build experimental build using: docker build --build-arg GO_VERSION=16.0-xxxx  --build-arg DOWNLOAD_URL=https://download.gocd.io/experimental/binaries -t gocd-agent .
 FROM phusion/baseimage:0.9.18
 MAINTAINER GoCD <go-cd-dev@googlegroups.com>
 
