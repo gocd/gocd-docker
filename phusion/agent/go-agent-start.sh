@@ -1,8 +1,6 @@
 #!/bin/bash
 
-GO_SERVER=${GO_SERVER:-go-server}
-GO_SERVER_PORT=${GO_SERVER_PORT:-8154}
-GO_SERVER_URL=${GO_SERVER_URL:-https://${GO_SERVER}:${GO_SERVER_PORT}/go/}
+GO_SERVER_URL=${GO_SERVER_URL:-https://gocd-server:8154/go/}
 
 COLOR_START="[01;34m"
 COLOR_END="[00m"
