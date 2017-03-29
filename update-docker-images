@@ -25,7 +25,7 @@ end
 
 def docker_build (repository, task, version)
   verify_version(version, task)
-  type = "gocd-#{task}"
+  type = "gocd-#{task}-deprecated"
   image = image_name(repository, type)
 
   verbose false do
